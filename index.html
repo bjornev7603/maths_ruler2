@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Widget Template</title>
+    <link rel="stylesheet" href="./matteWidget.css" />
+
+    <script src="https://unpkg.com/konva@7.2.5/konva.min.js"></script>      
+    
+    <script src="screenfull.js"></script>
+
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=j9BBiktC"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    
+    <script src="./main.js" type="module"></script>
+  </head>
+  <body>
+    <!-- <form name="math" id="math" action="?" >  
+    <table id="kl" cellspacing="5px"  style="border: darkcyan;">
+      <tr>
+        <td>
+          <label for="drag_number">Tall:</label>
+        </td>
+        <td>
+          <input type="text" id="drag_number" name="drag_number"  style="width: 30px;">
+        </td>
+        <td>
+          <label for="test_name">Testnavn:</label>
+        </td>
+        <td>
+          <input type="text" id="test_name" name="test_name"  style="width: 100px;">
+        </td>        
+        <td>
+          <label for="name_mandatory">Testtaker oppgir navn:</label>
+        </td>
+        <td>
+          <input type="checkbox" id="name_mandatory" name="name_mandatory">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <label for="Scale_from">Skala fra:</label>
+        </td>
+        <td>
+          <input type="text" id="Scale_from" name="Scale_from" style="width: 30px;" >
+        </td>
+        <td>
+          <label for="test_desc">Testbeskrivelse:</label>
+        </td>
+        <td rowspan="2">          
+          <textarea name="test_desc" id="test_desc" form="math" style="width: 300px;height: 80px;">Enter text here...</textarea>
+        </td>
+        <td>
+          <label for="order_random">Tilfeldig rekkefølge:</label>
+        </td>
+        <td>
+          <input type="checkbox" id="order_random"  name="order_random">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="Scale_to">Skala til:</label>
+        </td>
+        <td>
+          <input type="text" id="Scale_to" name="Scale_to"  style="width: 30px;">
+        </td>
+      </tr>
+      
+      <tr>
+        <td>
+          <label for="anchor_number1">Ankertall1:</label>
+        </td>
+        <td>
+          <input type="text" id="anchor_number1" name="anchor_number1"  style="width: 30px;">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <label for="anchor_number2">Ankertall2:</label>
+        </td>
+        <td>
+          <input type="text" id="anchor_number2" name="anchor_number2"  style="width: 30px;">
+        </td>
+      </tr>
+
+      
+
+
+      <tr>        
+        <td colspan="6"><input type="submit" value="Vis oppgave"></td>
+      </tr>
+    </table>
+  </form> -->
+
+
+    <div class="card"  style="background-color:white">
+      <div id="nameinput" name="nameinput" style="position: relative; float:right; max-width: 100px;">
+        <div id="div_testperson" name="div_testperson" >
+          <label for="testperson">Skriv inn ditt navn:&nbsp;</label>      
+          <input type="text" id="testperson" name="testperson"  style="width: 100px;color:olive">&nbsp;
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="start_task_btn" value="Ta oppgave">
+      </div>
+      <div class="widget" id="widget-container" >
+        
+      </div>
+    </div>
+    
+  </body>
+</html>
