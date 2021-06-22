@@ -6,6 +6,7 @@ export default class MatteWidget {
   //class MatteWidget {
   constructor(divElementId, config, answer = null, onAnswer, options) {
     this.test_id;
+
     var $_GET = {},
       //$_GET contains posted url query variables
       args = location.search.substr(1).split(/&/);
@@ -106,8 +107,11 @@ export default class MatteWidget {
 
     //ruler x and y and width/length (global attributes ruler object - not ideal)
     this.ruler_x = 50;
-    this.ruler_y = 500;
+    this.ruler_y = 430;
     this.ruler_width = 750;
+    this.y_drag_nums = 120;
+    this.x_nextbtn = 705;
+    this.y_nextbtn = 600;
     //let w_this = this;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
@@ -170,42 +174,57 @@ export default class MatteWidget {
       if (this.test_id != undefined && test != undefined) {
         var th = document.getElementById("testheader");
 
-        th.style = "width: 250px;color:olive;align:center;position: relative;";
+        //header title
+        th.style =
+          "width: 250px;color:red;position: absolute;left: 375px; top: 25px;font-size:30px;font-weight:bold; font-family: 'Courier New';";
         let tname = th.appendChild(document.createTextNode(test.Testname));
-        tname.style = "align: center";
 
         var name_in = document.getElementById("nameinput");
-        name_in.setAttribute("style", "width: 250px");
+        name_in.style =
+          "width: 300px;color:purple;position: absolute;left: 300px; top: 65px;font-family: 'Courier New'";
 
         var d_tp = name_in.appendChild(document.createElement("DIV"));
         d_tp.setAttribute("id", "div_testperson");
-        //show name field if name input is required for test ("Enter_tester_name" is checked in backend)
-        if (test.Enter_tester_name === true) {
-          d_tp.setAttribute("style", "display: block");
-        } else d_tp.setAttribute("style", "display: none");
 
         let tdisc = d_tp.appendChild(document.createTextNode(test.Description));
-        tdisc.style = "align: center";
         d_tp.innerHTML += "<br/><br/>";
 
-        var name_lbl = d_tp.appendChild(document.createElement("LABEL"));
-        name_lbl.innerHTML += "Skriv ditt navn ";
+        var inn_div = d_tp.appendChild(document.createElement("DIV"));
+        inn_div.setAttribute("id", "inner_div_testperson");
+        inn_div.style =
+          "font-family: 'Georgia'; font-size: 94px;position: absolute;top:100px;left:100px;";
+
+        var name_lbl = inn_div.appendChild(document.createElement("LABEL"));
+        name_lbl.innerHTML += "Skriv inn navn: ";
         name_lbl.setAttribute("for", "testperson");
-        var inp = d_tp.appendChild(document.createElement("INPUT"));
-        inp.setAttribute({
+        var inp = inn_div.appendChild(document.createElement("INPUT"));
+        this.setAttributes(inp, {
           type: "text",
           id: "testperson",
           name: "testperson",
-          style: "width: 100px",
         });
 
+        //show name field if name input is required for test ("Enter_tester_name" is checked in backend)
+        if (test.Enter_tester_name === true) {
+          inn_div.setAttribute("style", "display: block");
+        } else inn_div.setAttribute("style", "display: none");
+
+        d_tp.innerHTML += "<br>";
         //Pressed button to start tasks
         var x = d_tp.appendChild(document.createElement("INPUT"));
         x.setAttribute("type", "button");
+        x.style = "position: absolute;left: 100px;";
         x.setAttribute("value", "Ta oppgave");
         x.addEventListener("click", () => {
-          document.getElementById("widget-container").style.display = "block";
-          document.getElementById("nameinput").style.display = "none";
+          if (
+            test.Enter_tester_name === true &&
+            document.getElementById("testperson").value == ""
+          ) {
+            alert("Skriv inn navnet ditt!");
+          } else {
+            document.getElementById("widget-container").style.display = "block";
+            document.getElementById("nameinput").style.display = "none";
+          }
         });
 
         //show tasks in random order if test has this setting ("Order_random" is checked in backend)
@@ -223,8 +242,8 @@ export default class MatteWidget {
         const ruler_group = new Konva.Group();
 
         var nextbutton = new Konva.Label({
-          x: 666,
-          y: 20,
+          x: this.x_nextbtn,
+          y: this.y_nextbtn,
           opacity: 0.75,
         });
         layer.add(nextbutton);
@@ -324,6 +343,7 @@ export default class MatteWidget {
         let scale_to = test.tasks[taskid].Scale_to;
         scale_from = scale_from.includes("/") ? eval(scale_from) : scale_from;
         scale_to = scale_to.includes("/") ? eval(scale_to) : scale_to;
+
         //movable numbers
         let mov_nums = test.tasks[taskid].Num_dyna.split(/;/);
         for (var i = 0; i < mov_nums.length; ++i) {
@@ -343,7 +363,7 @@ export default class MatteWidget {
               x_num_coor /= 2;
           }
 
-          var drag_number = new Konva.Text({
+          /* var drag_number = new Konva.Text({
             x: x_num_coor,
             y: 250,
             text: mov_nums[i],
@@ -351,9 +371,55 @@ export default class MatteWidget {
             fontSize: 70,
             fontFamily: "Calibri",
             fill: "brown",
+            stroke: "yellow",
             Draggable: true,
+          }); */
+
+          var drag_number = new Konva.Group({
+            x: x_num_coor,
+            y: this.y_drag_nums,
+            width: 90,
+            height: 70,
+            rotation: 0,
+            draggable: true,
           });
 
+          drag_number.add(
+            new Konva.Rect({
+              width: 90,
+              height: 70,
+              stroke: "brown",
+              strokeWidth: 4,
+            })
+          );
+
+          drag_number.add(
+            new Konva.Rect({
+              x: 43,
+              y: 70,
+              width: 5,
+              height: 120,
+              fill: "brown",
+            })
+          );
+
+          drag_number.add(
+            new Konva.Text({
+              text: mov_nums[i],
+              i_txt: this.ii,
+              fontSize: 32,
+              //x: 10,
+              y: 10,
+              fontFamily: "Calibri",
+              fill: "#000",
+              width: 90,
+              padding: 2,
+              align: "center",
+            })
+          );
+          //layer.add(drag_number);
+
+          //for saving attempts to backend
           z_this.modifiedData_attempts.Numbers_solved +=
             i != 0 ? ";" + i + "|" + "none" : i + "|" + "none";
 
@@ -399,13 +465,13 @@ export default class MatteWidget {
             let numb = "";
             //if number hitting ruler area
             if (
-              this.y() < z_this.ruler_y + 50 &&
-              this.y() > z_this.ruler_y - 20
+              this.y() < z_this.ruler_y + 40 &&
+              this.y() > z_this.ruler_y - 200
             ) {
               alert(
                 "Posisjonen til tallet " +
                   //this.text().split("|")[0] +
-                  this.text() +
+                  this.children[2].text() +
                   " er " +
                   eval(fraction).toFixed(2) +
                   //fraction +
@@ -465,12 +531,12 @@ export default class MatteWidget {
           var anchor_number = new Konva.Text({
             //x: (this.ruler_x + this.ruler_width) / (i + 1.5),
             x: brok,
-            y: this.ruler_y + 45,
+            y: this.ruler_y + 55,
             text: anchor_nums[i],
             //text: w_this.anchor_number,
-            fontSize: 70,
+            fontSize: 37,
             fontFamily: "Calibri",
-            fill: "gray",
+            fill: "maroon",
             Draggable: false,
           });
           layer.add(anchor_number);
@@ -478,7 +544,7 @@ export default class MatteWidget {
         }
 
         var label_scalestart = new Konva.Text({
-          x: this.ruler_x + 20,
+          x: this.ruler_x + 1,
           y: this.ruler_y + 90,
           text: test.tasks[taskid].Scale_from,
           //text: w_this.Scale_from,
@@ -487,7 +553,7 @@ export default class MatteWidget {
           fill: "black",
         });
         var label_scaleend = new Konva.Text({
-          x: this.ruler_x + this.ruler_width - 40,
+          x: this.ruler_x + this.ruler_width - 30,
           y: this.ruler_y + 90,
           text: test.tasks[taskid].Scale_to,
           fontSize: 30,
@@ -528,5 +594,10 @@ export default class MatteWidget {
   }
   async isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+  async setAttributes(el, attrs) {
+    for (var key in attrs) {
+      el.setAttribute(key, attrs[key]);
+    }
   }
 }
