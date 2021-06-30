@@ -27,94 +27,32 @@ export default class MatteWidget {
 
     //show if content
     if (
-      $_GET.test != "" &&
-      $_GET.test != undefined &&
-      this.isNumeric($_GET.test)
+      $_GET.testid != "" &&
+      $_GET.testid != undefined &&
+      this.isNumeric($_GET.testid)
     ) {
-      this.test_id = parseInt($_GET.test);
+      this.test_id = parseInt($_GET.testid);
     } else this.test_id = 11; //default
-
-    //document.getElementById("widget-container").style.display = "none";
-
-    //document.getElementById("widget-container").style.display = "none";
-
-    // //get movable number(s) from $_GET variable
-    // this.drag_number =
-    //   $_GET.drag_number != undefined && $_GET.drag_number != ""
-    //     ? $_GET.drag_number
-    //     : 5;
-    // document.getElementById("drag_number").value = this.drag_number;
-
-    // //get movable number(s) from $_GET variable
-    // this.anchor_number1 =
-    //   $_GET.anchor_number1 != undefined && $_GET.anchor_number1 != ""
-    //     ? $_GET.anchor_number1
-    //     : 3;
-    // document.getElementById("anchor_number1").value = this.anchor_number1;
-
-    // //get movable number(s) from $_GET variable
-    // this.anchor_number2 =
-    //   $_GET.anchor_number2 != undefined && $_GET.anchor_number2 != ""
-    //     ? $_GET.anchor_number2
-    //     : 7;
-    // document.getElementById("anchor_number2").value = this.anchor_number2;
-
-    // //get scale start from $_GET variable
-    // this.Scale_from =
-    //   $_GET.Scale_from != undefined && $_GET.Scale_from != ""
-    //     ? $_GET.Scale_from
-    //     : 0;
-    // document.getElementById("Scale_from").value = this.Scale_from;
-
-    // //get scale end from $_GET variable
-    // this.Scale_to =
-    //   $_GET.Scale_to != undefined && $_GET.Scale_to != "" ? $_GET.Scale_to : 10;
-    // document.getElementById("Scale_to").value = this.Scale_to;
-
-    // //get test name from $_GET variable
-    // this.test_name =
-    //   $_GET.test_name != undefined && $_GET.test_name != ""
-    //     ? $_GET.test_name
-    //     : "";
-    // document.getElementById("test_name").value = this.test_name.replaceAll(
-    //   "+",
-    //   " "
-    // );
-
-    // //get test description from $_GET variable
-    // this.test_desc =
-    //   $_GET.test_desc != undefined && $_GET.test_desc != ""
-    //     ? $_GET.test_desc
-    //     : "";
-    // document.getElementById("test_desc").value = this.test_desc.replaceAll(
-    //   "+",
-    //   " "
-    // );
-
-    // if ($_GET.name_mandatory != undefined && $_GET.name_mandatory != "") {
-    //   this.name_mandatory = $_GET.name_mandatory;
-    //   document.getElementById("name_mandatory").checked = "on";
-    // }
 
     // if ($_GET.order_random != undefined && $_GET.order_random != "") {
     //   this.order_random = $_GET.order_random;
     //   document.getElementById("order_random").checked = "on";
     // }
 
-    //cut the ruler's arrows, place number on the ruler line between arrows, then find the number relative distance in the given scale.
-    this.r_offset_start = 30;
-    this.r_offset_end = 30;
-
     //ruler x and y and width/length (global attributes ruler object - not ideal)
     this.ruler_x = 50;
-    this.ruler_y = 430;
-    this.ruler_width = 750;
+    this.ruler_y = 500;
+    this.ruler_width = 650;
+    this.ruler_height = 5;
     this.y_drag_nums = 120;
-    this.x_nextbtn = 705;
-    this.y_nextbtn = 600;
+    this.x_nextbtn = 605;
+    this.y_nextbtn = 625;
+    this.fixed_anchor_width = 20; //place physical number center at ruler fraction point (according to scale)
     //let w_this = this;
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
+    this.width = window.innerWidth - 100;
+    this.height = window.innerHeight - 100;
+
+    this.img = "";
 
     //show ruler with header, name input and tasks
     //**********************************/
@@ -176,28 +114,33 @@ export default class MatteWidget {
 
         //header title
         th.style =
-          "width: 250px;color:red;position: absolute;left: 375px; top: 25px;font-size:30px;font-weight:bold; font-family: 'Courier New';";
+          "width: 400px;color:black;position: absolute;left: 375px; top: 40px;font-size:28px;font-weight:bold; font-family: Century Schoolbook;";
         let tname = th.appendChild(document.createTextNode(test.Testname));
 
         var name_in = document.getElementById("nameinput");
         name_in.style =
-          "width: 300px;color:purple;position: absolute;left: 300px; top: 65px;font-family: 'Courier New'";
+          "width: 400px;color:black;position: absolute;left: 300px; top: 90px;font-family: Century Schoolbook;font-size:24px";
 
         var d_tp = name_in.appendChild(document.createElement("DIV"));
         d_tp.setAttribute("id", "div_testperson");
+        //d_tp.style = "top:500px;left:2000px;";
 
-        let tdisc = d_tp.appendChild(document.createTextNode(test.Description));
+        //let tdisc =
+        d_tp.appendChild(document.createTextNode(test.Description));
         d_tp.innerHTML += "<br/><br/>";
 
         var inn_div = d_tp.appendChild(document.createElement("DIV"));
         inn_div.setAttribute("id", "inner_div_testperson");
-        inn_div.style =
-          "font-family: 'Georgia'; font-size: 94px;position: absolute;top:100px;left:100px;";
+        inn_div.style = "position: absolute;top: 9px;left: 2px;";
 
         var name_lbl = inn_div.appendChild(document.createElement("LABEL"));
-        name_lbl.innerHTML += "Skriv inn navn: ";
+        name_lbl.style =
+          "position: absolute;top: 375px;left: 5px;font-size:18px";
+        name_lbl.innerHTML += "Skriv inn navnet ditt: ";
         name_lbl.setAttribute("for", "testperson");
         var inp = inn_div.appendChild(document.createElement("INPUT"));
+        inp.style =
+          "position: absolute;top: 400px;left: 2px;width:180px;height:20px;";
         this.setAttributes(inp, {
           type: "text",
           id: "testperson",
@@ -213,7 +156,8 @@ export default class MatteWidget {
         //Pressed button to start tasks
         var x = d_tp.appendChild(document.createElement("INPUT"));
         x.setAttribute("type", "button");
-        x.style = "position: absolute;left: 100px;";
+        x.style =
+          "font-size: 22px;position: absolute;top:400px;left: 400px;color: antiquewhite;width:150px;background-color: deepskyblue;";
         x.setAttribute("value", "Ta oppgave");
         x.addEventListener("click", () => {
           if (
@@ -250,7 +194,7 @@ export default class MatteWidget {
 
         nextbutton.add(
           new Konva.Tag({
-            fill: "blue",
+            fill: "deepskyblue",
             lineJoin: "round",
             shadowColor: "black",
             shadowBlur: 10,
@@ -263,9 +207,9 @@ export default class MatteWidget {
           new Konva.Text({
             text: "Neste",
             fontFamily: "Calibri",
-            fontSize: 18,
+            fontSize: 20,
             padding: 5,
-            fill: "white",
+            fill: "antiquewhite",
           })
         );
 
@@ -327,12 +271,13 @@ export default class MatteWidget {
             y: z_this.ruler_y,
             image: imageObj,
             width: z_this.ruler_width,
+            height: z_this.ruler_height,
           });
           // add the shape to the layer
           ruler_group.add(ruler_img);
           layer.batchDraw();
         };
-        imageObj.src = "./img/arrow.png";
+        imageObj.src = "./img/ruler.png";
 
         if (parseInt(localStorage.getItem("tasknr")) > 0) {
           document.getElementById("widget-container").style.display = "block";
@@ -347,6 +292,18 @@ export default class MatteWidget {
         //movable numbers
         let mov_nums = test.tasks[taskid].Num_dyna.split(/;/);
         for (var i = 0; i < mov_nums.length; ++i) {
+          //html for making fraction img for ruler
+          //********************************************************** */
+          let fract_div = document.getElementById("fract");
+          fract_div.style = "display:block";
+          if (mov_nums[i].includes("/")) {
+            fract_div.children[0].innerHTML = mov_nums[i].split("/")[0];
+            fract_div.children[1].innerHTML = mov_nums[i].split("/")[1];
+          } else {
+            fract_div.children[2].innerHTML = mov_nums[i];
+          }
+          //********************************************************** */
+
           this.ii = i;
           let x_num_coor = this.ruler_x + this.ruler_width;
           switch (i) {
@@ -363,61 +320,38 @@ export default class MatteWidget {
               x_num_coor /= 2;
           }
 
-          /* var drag_number = new Konva.Text({
-            x: x_num_coor,
-            y: 250,
-            text: mov_nums[i],
-            i_txt: this.ii,
-            fontSize: 70,
-            fontFamily: "Calibri",
-            fill: "brown",
-            stroke: "yellow",
-            Draggable: true,
-          }); */
-
           var drag_number = new Konva.Group({
             x: x_num_coor,
             y: this.y_drag_nums,
-            width: 90,
-            height: 70,
+            width: 55,
+            height: 30,
             rotation: 0,
             draggable: true,
+            text: "drag",
           });
 
           drag_number.add(
             new Konva.Rect({
-              width: 90,
-              height: 70,
-              stroke: "brown",
+              width: 45,
+              height: 50,
+              y: -6,
+              stroke: "deepskyblue",
+              fill: "white",
               strokeWidth: 4,
             })
           );
 
           drag_number.add(
             new Konva.Rect({
-              x: 43,
-              y: 70,
-              width: 5,
-              height: 120,
-              fill: "brown",
+              x: 20,
+              y: 42,
+              width: 4,
+              height: 150,
+              fill: "deepskyblue",
             })
           );
 
-          drag_number.add(
-            new Konva.Text({
-              text: mov_nums[i],
-              i_txt: this.ii,
-              fontSize: 32,
-              //x: 10,
-              y: 10,
-              fontFamily: "Calibri",
-              fill: "#000",
-              width: 90,
-              padding: 2,
-              align: "center",
-            })
-          );
-          //layer.add(drag_number);
+          z_this.makeImgNum(layer, drag_number);
 
           //for saving attempts to backend
           z_this.modifiedData_attempts.Numbers_solved +=
@@ -448,14 +382,13 @@ export default class MatteWidget {
             // scale-start +
             //  (difference from scale-start to scale-end)
             //  *
-            //  position-of-number - startposition-ruler - [offset-at-start]
+            //  position-of-number - startposition-ruler
             //  /
-            //  width-of-ruler - startposition-ruler - [offset-at-end]
+            //  width-of-ruler - startposition-ruler
             let fraction =
               eval(scale_from) +
-              ((scale_to - scale_from) *
-                (this.x() - ruler.x() - z_this.r_offset_start)) /
-                (ruler.width() - ruler.x() - z_this.r_offset_end);
+              ((scale_to - scale_from) * (this.x() - ruler.x())) /
+                (ruler.width() - ruler.x());
 
             //if number is put beyond scale end, it gets the scale end position
             if (fraction > scale_to) fraction = scale_to;
@@ -465,8 +398,8 @@ export default class MatteWidget {
             let numb = "";
             //if number hitting ruler area
             if (
-              this.y() < z_this.ruler_y + 40 &&
-              this.y() > z_this.ruler_y - 200
+              this.y() < z_this.ruler_y + 0 &&
+              this.y() > z_this.ruler_y - 160
             ) {
               alert(
                 "Posisjonen til tallet " +
@@ -519,50 +452,126 @@ export default class MatteWidget {
         let anchor_nums = test.tasks[taskid].Num_static.split(/;/);
         for (var i = 0; i < anchor_nums.length; ++i) {
           let anchor = anchor_nums[i];
+
+          //html for making fraction img for ruler
+          //********************************************************** */
+          let fract_div = document.getElementById("fract");
+          fract_div.style = "display:block";
+          if (anchor_nums[i].includes("/")) {
+            fract_div.children[0].innerHTML = anchor.split("/")[0];
+            fract_div.children[1].innerHTML = anchor.split("/")[1];
+          } else {
+            fract_div.children[2].innerHTML = anchor;
+          }
+          //********************************************************** */
+          let anchor_txt = anchor;
           anchor = anchor.includes("/") ? eval(anchor) : anchor;
           let brok = (anchor - scale_from) / (scale_to - scale_from);
-          brok =
-            brok *
-            (this.ruler_width -
-              z_this.r_offset_end -
-              (this.ruler_x + z_this.r_offset_start));
-          brok = brok + this.ruler_x + z_this.r_offset_start;
+          brok = brok * this.ruler_width;
+          brok = brok + this.ruler_x;
+          brok -= this.fixed_anchor_width;
 
-          var anchor_number = new Konva.Text({
-            //x: (this.ruler_x + this.ruler_width) / (i + 1.5),
-            x: brok,
-            y: this.ruler_y + 55,
-            text: anchor_nums[i],
-            //text: w_this.anchor_number,
-            fontSize: 37,
-            fontFamily: "Calibri",
-            fill: "maroon",
+          //************************************* */
+          //anchors with tickmarks on ruler
+          let anchor_number = new Konva.Group({
+            x: brok - 5,
+            y: this.ruler_y + 10,
+            width: 90,
+            height: 70,
+            rotation: 0,
             Draggable: false,
           });
+
+          anchor_number.add(
+            new Konva.Rect({
+              width: 40,
+              height: 40,
+              //stroke: "brown",
+              //strokeWidth: 4,
+            })
+          );
+
+          anchor_number.add(
+            new Konva.Rect({
+              x: 25,
+              y: -17,
+              width: 3,
+              height: 20,
+              fill: "black",
+            })
+          );
+
+          z_this.makeImgNum(layer, anchor_number);
+
           layer.add(anchor_number);
           anchor_number.zIndex(1);
         }
 
-        var label_scalestart = new Konva.Text({
-          x: this.ruler_x + 1,
-          y: this.ruler_y + 90,
-          text: test.tasks[taskid].Scale_from,
-          //text: w_this.Scale_from,
-          fontSize: 30,
-          fontFamily: "Calibri",
-          fill: "black",
-        });
-        var label_scaleend = new Konva.Text({
-          x: this.ruler_x + this.ruler_width - 30,
-          y: this.ruler_y + 90,
-          text: test.tasks[taskid].Scale_to,
-          fontSize: 30,
-          fontFamily: "Calibri",
-          fill: "black",
-        });
+        let scale_nums = [
+          test.tasks[taskid].Scale_from,
+          test.tasks[taskid].Scale_to,
+        ];
+        for (let i = 0; i < scale_nums.length; i++) {
+          //html for making fraction img for ruler
+          //********************************************************** */
+          let fract_div = document.getElementById("fract");
+          fract_div.style = "display:block";
+          if (scale_nums[i].includes("/")) {
+            fract_div.children[0].innerHTML = scale_nums[i].split("/")[0];
+            fract_div.children[1].innerHTML = scale_nums[i].split("/")[1];
+          } else {
+            fract_div.children[2].innerHTML = scale_nums[i];
+          }
 
-        layer.add(label_scalestart);
-        layer.add(label_scaleend);
+          //********************************************************** */
+
+          //************************************* */
+          //start and end line scale anchors with tickmarks on ruler
+          let lbl_tick_scale = new Konva.Group({
+            //start - and end ticket mark
+            x:
+              i == 0 ? this.ruler_x - 30 : this.ruler_x + this.ruler_width - 30,
+            y: this.ruler_y + 10,
+            width: 90,
+            height: 70,
+            rotation: 0,
+            Draggable: false,
+          });
+
+          lbl_tick_scale.add(
+            new Konva.Rect({
+              width: 40,
+              height: 40,
+              //stroke: "brown",
+              //strokeWidth: 4,
+            })
+          );
+
+          lbl_tick_scale.add(
+            new Konva.Rect({
+              x: 30,
+              y: -17,
+              width: 3,
+              height: 20,
+              fill: "black",
+            })
+          );
+
+          z_this.makeImgNum(layer, lbl_tick_scale);
+
+          /* lbl_tick_scale.add(
+            new Konva.Text({
+              text: scale_nums[i],
+              fontSize: 20,
+              fontFamily: "Calibri",
+              fill: "lightslategray",
+            })
+          ); */
+
+          layer.add(lbl_tick_scale);
+          // layer.add(label_scaleend);
+          fract_div.style = "display:none";
+        }
 
         // add the rect shape to the ruler group
         layer.add(ruler_group);
@@ -599,5 +608,48 @@ export default class MatteWidget {
     for (var key in attrs) {
       el.setAttribute(key, attrs[key]);
     }
+  }
+
+  async makeImgNum(lay, num) {
+    // convert DOM into image
+    var z_this = this;
+    let h = 35,
+      w = 35,
+      y_pos = 0,
+      x_pos = 0;
+
+    //if fraction
+    if ($("#fract")[0].children[2].innerHTML == "") {
+      y_pos = h - h * 0.95;
+      x_pos = w / 2 + w * 0.1;
+      //integer or decimal
+    } else {
+      y_pos = h / 2 - h / 4;
+      x_pos = num.attrs.text == "drag" ? w / 2 + w * 0.05 : w / 2 + w * 0.15;
+    }
+    html2canvas($("#fract")[0], {
+      width: 35,
+      height: 35,
+      backgroundColor: null,
+    })
+      .then((canvas) => {
+        z_this.img = canvas.toDataURL("image/jpg");
+        Konva.Image.fromURL(z_this.img, function (imag) {
+          imag.setAttrs({
+            x: x_pos,
+            y: y_pos,
+            width: w,
+            height: h,
+          });
+          num.add(imag);
+          lay.batchDraw();
+        });
+        return true;
+      })
+      .catch(function (error) {
+        /* This is fired when the promise executes without the DOM */
+        console.log(error);
+        return false;
+      });
   }
 }
