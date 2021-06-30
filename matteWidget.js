@@ -114,12 +114,12 @@ export default class MatteWidget {
 
         //header title
         th.style =
-          "width: 400px;color:black;position: absolute;left: 375px; top: 40px;font-size:28px;font-weight:bold; font-family: Century Schoolbook;";
+          "width: 400px;color:black;position: absolute;left: 750px; top: 40px;font-size:28px;font-weight:bold; font-family: Century Schoolbook;";
         let tname = th.appendChild(document.createTextNode(test.Testname));
 
         var name_in = document.getElementById("nameinput");
         name_in.style =
-          "width: 400px;color:black;position: absolute;left: 300px; top: 90px;font-family: Century Schoolbook;font-size:24px";
+          "width: 400px;color:black;position: absolute;left: 600px; top: 90px;font-family: Century Schoolbook;font-size:24px";
 
         var d_tp = name_in.appendChild(document.createElement("DIV"));
         d_tp.setAttribute("id", "div_testperson");
@@ -294,15 +294,9 @@ export default class MatteWidget {
         for (var i = 0; i < mov_nums.length; ++i) {
           //html for making fraction img for ruler
           //********************************************************** */
-          let fract_div = document.getElementById("fract");
-          fract_div.style = "display:block";
-          if (mov_nums[i].includes("/")) {
-            fract_div.children[0].innerHTML = mov_nums[i].split("/")[0];
-            fract_div.children[1].innerHTML = mov_nums[i].split("/")[1];
-          } else {
-            fract_div.children[2].innerHTML = mov_nums[i];
-          }
-          //********************************************************** */
+
+          //makes fraction line if fraction, line length = longest number string
+          this.setCSSNumberDisplay(mov_nums[i]);
 
           this.ii = i;
           let x_num_coor = this.ruler_x + this.ruler_width;
@@ -399,12 +393,12 @@ export default class MatteWidget {
             //if number hitting ruler area
             if (
               this.y() < z_this.ruler_y + 0 &&
-              this.y() > z_this.ruler_y - 160
+              this.y() > z_this.ruler_y - 180
             ) {
               alert(
                 "Posisjonen til tallet " +
                   //this.text().split("|")[0] +
-                  this.children[2].text() +
+                  //this.children[2].text() +
                   " er " +
                   eval(fraction).toFixed(2) +
                   //fraction +
@@ -451,22 +445,18 @@ export default class MatteWidget {
 
         let anchor_nums = test.tasks[taskid].Num_static.split(/;/);
         for (var i = 0; i < anchor_nums.length; ++i) {
-          let anchor = anchor_nums[i];
+          //let anchor = anchor_nums[i];
 
           //html for making fraction img for ruler
           //********************************************************** */
-          let fract_div = document.getElementById("fract");
-          fract_div.style = "display:block";
-          if (anchor_nums[i].includes("/")) {
-            fract_div.children[0].innerHTML = anchor.split("/")[0];
-            fract_div.children[1].innerHTML = anchor.split("/")[1];
-          } else {
-            fract_div.children[2].innerHTML = anchor;
-          }
-          //********************************************************** */
-          let anchor_txt = anchor;
-          anchor = anchor.includes("/") ? eval(anchor) : anchor;
-          let brok = (anchor - scale_from) / (scale_to - scale_from);
+
+          //makes fraction line if fraction, line length = longest number string
+          this.setCSSNumberDisplay(anchor_nums[i]);
+
+          anchor_nums[i] = anchor_nums[i].includes("/")
+            ? eval(anchor_nums[i])
+            : anchor_nums[i];
+          let brok = (anchor_nums[i] - scale_from) / (scale_to - scale_from);
           brok = brok * this.ruler_width;
           brok = brok + this.ruler_x;
           brok -= this.fixed_anchor_width;
@@ -514,18 +504,10 @@ export default class MatteWidget {
         for (let i = 0; i < scale_nums.length; i++) {
           //html for making fraction img for ruler
           //********************************************************** */
-          let fract_div = document.getElementById("fract");
-          fract_div.style = "display:block";
-          if (scale_nums[i].includes("/")) {
-            fract_div.children[0].innerHTML = scale_nums[i].split("/")[0];
-            fract_div.children[1].innerHTML = scale_nums[i].split("/")[1];
-          } else {
-            fract_div.children[2].innerHTML = scale_nums[i];
-          }
 
-          //********************************************************** */
+          //makes fraction line if fraction, line length = longest number string
+          this.setCSSNumberDisplay(scale_nums[i]);
 
-          //************************************* */
           //start and end line scale anchors with tickmarks on ruler
           let lbl_tick_scale = new Konva.Group({
             //start - and end ticket mark
@@ -559,23 +541,14 @@ export default class MatteWidget {
 
           z_this.makeImgNum(layer, lbl_tick_scale);
 
-          /* lbl_tick_scale.add(
-            new Konva.Text({
-              text: scale_nums[i],
-              fontSize: 20,
-              fontFamily: "Calibri",
-              fill: "lightslategray",
-            })
-          ); */
-
           layer.add(lbl_tick_scale);
-          // layer.add(label_scaleend);
-          fract_div.style = "display:none";
         }
 
         // add the rect shape to the ruler group
         layer.add(ruler_group);
         ruler_group.zIndex(0);
+
+        this.fract_div.style = "display:none"; //re-hide div containing fractions
 
         // add the layer to the stage
         stage.add(layer);
@@ -618,11 +591,11 @@ export default class MatteWidget {
       y_pos = 0,
       x_pos = 0;
 
-    //if fraction
+    //if fraction: calibrate marker and number accordingly
     if ($("#fract")[0].children[2].innerHTML == "") {
       y_pos = h - h * 0.95;
-      x_pos = w / 2 + w * 0.1;
-      //integer or decimal
+      x_pos = num.attrs.text == "drag" ? w / 2 + w * 0.05 : w / 2 + w * 0.1;
+      //integer or decimal: calibarate marker and number accordingly
     } else {
       y_pos = h / 2 - h / 4;
       x_pos = num.attrs.text == "drag" ? w / 2 + w * 0.05 : w / 2 + w * 0.15;
@@ -644,6 +617,7 @@ export default class MatteWidget {
           num.add(imag);
           lay.batchDraw();
         });
+
         return true;
       })
       .catch(function (error) {
@@ -651,5 +625,30 @@ export default class MatteWidget {
         console.log(error);
         return false;
       });
+  }
+
+  //html for making fraction img for ruler
+  //********************************************************** */
+  async setCSSNumberDisplay(element) {
+    this.fract_div = document.getElementById("fract");
+    this.fract_div.style = "display:block";
+    if (element.includes("/")) {
+      let css_num = "",
+        css_denom = "";
+      if (element.split("/")[0].length > element.split("/")[1].length) {
+        css_num = "numerator_biggest";
+        css_denom = "denominator_smallest";
+      } else {
+        css_num = "numerator_smallest";
+        css_denom = "denominator_biggest";
+      }
+
+      this.fract_div.children[0].innerHTML = element.split("/")[0];
+      this.fract_div.children[0].setAttribute("class", css_num);
+      this.fract_div.children[1].innerHTML = element.split("/")[1];
+      this.fract_div.children[1].setAttribute("class", css_denom);
+    } else {
+      this.fract_div.children[2].innerHTML = element;
+    }
   }
 }
