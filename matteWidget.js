@@ -56,6 +56,7 @@ export default class MatteWidget {
     this.y_dragnums = 120;
     this.dragnum_container_W = 40;
     this.dragnum_container_H = 50;
+    this.dragmarker_W = 4;
     this.x_nextbtn = 605;
     this.y_nextbtn = 625;
     this.fixed_anchor_width = 20; //place physical number center at ruler fraction point (according to scale)
@@ -356,9 +357,9 @@ export default class MatteWidget {
 
           drag_number.add(
             new Konva.Rect({
-              x: 20,
+              x: this.dragnum_container_W / 2 - this.dragmarker_W / 2,
               y: 48,
-              width: 4,
+              width: this.dragmarker_W,
               height: 150,
               fill: "deepskyblue",
             })
@@ -401,8 +402,13 @@ export default class MatteWidget {
             //  width-of-ruler - startposition-ruler
             let fraction =
               eval(scale_from) +
-              ((scale_to - scale_from) * (this.x() - ruler.x())) /
-                (ruler.width() - ruler.x());
+              ((scale_to - scale_from) *
+                (this.x() +
+                  (z_this.dragnum_container_W / 2 - z_this.dragmarker_W / 2) -
+                  ruler.x())) /
+                ruler.width();
+
+            //fraction -= fraction / 20;
 
             //if number is put beyond scale end, it gets the scale end position
             if (fraction > scale_to) fraction = scale_to;
@@ -489,7 +495,7 @@ export default class MatteWidget {
           //************************************* */
           //anchors with tickmarks on ruler
           let anchor_number = new Konva.Group({
-            x: brok - 5,
+            x: brok,
             y: this.ruler_y + this.anch_dY_from_ruler,
             /* width: 90,
             height: 70,
@@ -631,10 +637,11 @@ export default class MatteWidget {
         let y_pos, x_pos;
         /* w = canvas.width;
         h = canvas.height; */
-        let div_fact = number.toString().length > 3 ? 4 : 2.4;
+
         let nb = $("#fract")[0].children[2].innerHTML;
         //IF FRACTION: CALIBRATE MARKER AND NUMBER ACCORDINGLY
         if (nb == undefined || nb == "") {
+          let div_fact = number.toString().length > 3 ? 3.9 : 2.4;
           if (num_gr.attrs.text == "drag") {
             x_pos = this.tick_scale_W / div_fact; //w / 2 - w * 0.05; //draggables
             y_pos = h - h * 0.8;
