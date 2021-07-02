@@ -555,7 +555,7 @@ export default class MatteWidget {
             new Konva.Rect({
               width: this.tick_scale_W,
               height: this.tick_scale_H,
-              stroke: 2,
+              //stroke: 2,
               //stroke: "brown",
               //strokeWidth: 4,
             })
@@ -658,7 +658,7 @@ export default class MatteWidget {
             y: y_pos,
             width: w,
             height: h,
-            stroke: 2,
+            //stroke: 2,
           });
           num_gr.add(imag);
           lay.batchDraw();
