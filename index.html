@@ -10,14 +10,18 @@
     <script src="https://unpkg.com/konva@7.2.5/konva.min.js"></script>      
     
     <script src="screenfull.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <script src="https://code.responsivevoice.org/responsivevoice.js?key=j9BBiktC"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     
     <script src="./main.js" type="module"></script>
+
+    
   </head>
-  <body>
+  <body id="ruler">
     <!-- <form name="math" id="math" action="?" >  
     <table id="kl" cellspacing="5px"  style="border: darkcyan;">
       <tr>
@@ -95,9 +99,19 @@
   </form> -->
 
 
-    <div class="card"  style="background-color:white">
+    <div class="card"  style="background-color:whitesmoke;width: 750px;font-family: 'Arial' ;">
+    
+      <div id="fract" name="fract">
+        <div></div>
+        <div></div>
+        <div class=no_frac></div>
+      </div>
+
       
-    <div id="testheader"></div>
+    
+      <div id="testheader"></div>
+    
+    <!-- <div class="top">2</div><div class="bottom">6</div> -->
       <div id="nameinput" name="nameinput"></div>
       <div class="widget" id="widget-container" ></div>
               

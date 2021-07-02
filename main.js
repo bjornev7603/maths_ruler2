@@ -162,13 +162,13 @@ function makeWidget(
   filename = null
 ) {
   // let divEl = document.getElementById('widget')
-  if (divContainer.hasChildNodes())
-    divContainer.removeChild(divContainer.firstChild);
+  //if (divContainer.hasChildNodes())
+  //    divContainer.removeChild(divContainer.firstChild);
   //answerEl.value = "";
   delete window.widget;
   let divEl = document.createElement("div");
   divEl.id = "widget" + Math.random().toString(36).substring(2, 15);
-  divContainer.append(divEl);
+  //divContainer.append(divEl);
   window.widget = new Widget(divEl.id, config, answer, onAnswer, {
     playback: playback,
     svg: svg,

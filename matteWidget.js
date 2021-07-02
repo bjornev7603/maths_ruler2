@@ -44,7 +44,18 @@ export default class MatteWidget {
     this.ruler_y = 500;
     this.ruler_width = 650;
     this.ruler_height = 5;
-    this.y_drag_nums = 120;
+    this.anch_dY_from_ruler = 10;
+    this.anch_dX_from_ruler = 0;
+    this.tick_scale_W = 40;
+    this.tick_scale_H = 40;
+    this.tick_height = 10;
+    this.tick_width = 2;
+    this.tick_y_pos = -12;
+    this.html2c_H = 35;
+    this.html2c_W = 35;
+    this.y_dragnums = 120;
+    this.dragnum_container_W = 40;
+    this.dragnum_container_H = 50;
     this.x_nextbtn = 605;
     this.y_nextbtn = 625;
     this.fixed_anchor_width = 20; //place physical number center at ruler fraction point (according to scale)
@@ -295,28 +306,37 @@ export default class MatteWidget {
           //html for making fraction img for ruler
           //********************************************************** */
 
-          //makes fraction line if fraction, line length = longest number string
+          //MAKES FRACTION LINE IF FRACTION, LINE LENGTH = LONGEST NUMBER STRING
           this.setCSSNumberDisplay(mov_nums[i]);
 
+          //PLACING 5 FIRST MOVABLE NUMBERS FROM 'FORSKER' APP/STRAPI WITH CORRECT PIXEL DISTANCE
           this.ii = i;
           let x_num_coor = this.ruler_x + this.ruler_width;
           switch (i) {
             case 0:
-              x_num_coor /= 5;
+              x_num_coor /= 3.8;
               break;
             case 1:
               x_num_coor /= 2;
               break;
             case 2:
-              x_num_coor /= 1.25;
+              x_num_coor /= 1.4;
+              break;
+            case 3:
+              x_num_coor /= 20;
+              break;
+            case 4:
+              x_num_coor /= 1.06;
+
               break;
             default:
               x_num_coor /= 2;
           }
 
+          //DRAGGABLE NUMBERS
           var drag_number = new Konva.Group({
             x: x_num_coor,
-            y: this.y_drag_nums,
+            y: this.y_dragnums,
             width: 55,
             height: 30,
             rotation: 0,
@@ -326,9 +346,8 @@ export default class MatteWidget {
 
           drag_number.add(
             new Konva.Rect({
-              width: 45,
-              height: 50,
-              y: -6,
+              width: this.dragnum_container_W,
+              height: this.dragnum_container_H,
               stroke: "deepskyblue",
               fill: "white",
               strokeWidth: 4,
@@ -338,16 +357,17 @@ export default class MatteWidget {
           drag_number.add(
             new Konva.Rect({
               x: 20,
-              y: 42,
+              y: 48,
               width: 4,
               height: 150,
               fill: "deepskyblue",
             })
           );
 
-          z_this.makeImgNum(layer, drag_number);
+          //THE NUMBER ITSELF
+          z_this.makeImgNum(layer, drag_number, mov_nums[i]);
 
-          //for saving attempts to backend
+          //SAVING ATTEMPTS TO BACKEND
           z_this.modifiedData_attempts.Numbers_solved +=
             i != 0 ? ";" + i + "|" + "none" : i + "|" + "none";
 
@@ -443,6 +463,10 @@ export default class MatteWidget {
           drag_number.zIndex(1);
         }
 
+        //******* */
+        //ANCHORS
+        //******* */
+
         let anchor_nums = test.tasks[taskid].Num_static.split(/;/);
         for (var i = 0; i < anchor_nums.length; ++i) {
           //let anchor = anchor_nums[i];
@@ -453,6 +477,7 @@ export default class MatteWidget {
           //makes fraction line if fraction, line length = longest number string
           this.setCSSNumberDisplay(anchor_nums[i]);
 
+          let anch_txt = anchor_nums[i]; // for evaluating fraction char lenght for layout
           anchor_nums[i] = anchor_nums[i].includes("/")
             ? eval(anchor_nums[i])
             : anchor_nums[i];
@@ -465,17 +490,17 @@ export default class MatteWidget {
           //anchors with tickmarks on ruler
           let anchor_number = new Konva.Group({
             x: brok - 5,
-            y: this.ruler_y + 10,
-            width: 90,
+            y: this.ruler_y + this.anch_dY_from_ruler,
+            /* width: 90,
             height: 70,
-            rotation: 0,
-            Draggable: false,
+            rotation: 0, 
+            Draggable: false,*/
           });
 
           anchor_number.add(
             new Konva.Rect({
-              width: 40,
-              height: 40,
+              width: this.tick_scale_W,
+              height: this.tick_scale_H,
               //stroke: "brown",
               //strokeWidth: 4,
             })
@@ -483,19 +508,23 @@ export default class MatteWidget {
 
           anchor_number.add(
             new Konva.Rect({
-              x: 25,
-              y: -17,
-              width: 3,
-              height: 20,
+              x: this.tick_scale_W / 2,
+              y: this.tick_y_pos,
+              width: this.tick_width,
+              height: this.tick_height,
               fill: "black",
             })
           );
 
-          z_this.makeImgNum(layer, anchor_number);
+          z_this.makeImgNum(layer, anchor_number, anch_txt);
 
           layer.add(anchor_number);
           anchor_number.zIndex(1);
         }
+
+        //********************** */
+        //END/START SCALE ANCHS
+        //********************** */
 
         let scale_nums = [
           test.tasks[taskid].Scale_from,
@@ -512,18 +541,21 @@ export default class MatteWidget {
           let lbl_tick_scale = new Konva.Group({
             //start - and end ticket mark
             x:
-              i == 0 ? this.ruler_x - 30 : this.ruler_x + this.ruler_width - 30,
-            y: this.ruler_y + 10,
-            width: 90,
-            height: 70,
-            rotation: 0,
-            Draggable: false,
+              i == 0
+                ? this.ruler_x - this.tick_scale_W / 2 // this.anch_dX_from_ruler
+                : this.ruler_x + this.ruler_width - this.tick_scale_W / 2, // this.anch_dX_from_ruler,
+            y: this.ruler_y + this.anch_dY_from_ruler,
+            //width: 90,
+            //height: 70,
+            //rotation: 0,
+            //Draggable: false,
           });
 
           lbl_tick_scale.add(
             new Konva.Rect({
-              width: 40,
-              height: 40,
+              width: this.tick_scale_W,
+              height: this.tick_scale_H,
+              stroke: 2,
               //stroke: "brown",
               //strokeWidth: 4,
             })
@@ -531,15 +563,15 @@ export default class MatteWidget {
 
           lbl_tick_scale.add(
             new Konva.Rect({
-              x: 30,
-              y: -17,
-              width: 3,
-              height: 20,
+              x: this.tick_scale_W / 2, // this.anch_dX_from_ruler,
+              y: this.tick_y_pos,
+              width: this.tick_width,
+              height: this.tick_height,
               fill: "black",
             })
           );
 
-          z_this.makeImgNum(layer, lbl_tick_scale);
+          z_this.makeImgNum(layer, lbl_tick_scale, scale_nums[i]);
 
           layer.add(lbl_tick_scale);
         }
@@ -583,38 +615,52 @@ export default class MatteWidget {
     }
   }
 
-  async makeImgNum(lay, num) {
+  async makeImgNum(lay, num_gr, number) {
     // convert DOM into image
     var z_this = this;
-    let h = 35,
-      w = 35,
-      y_pos = 0,
-      x_pos = 0;
+    let w = this.html2c_W;
+    let h = this.html2c_H;
 
-    //if fraction: calibrate marker and number accordingly
-    if ($("#fract")[0].children[2].innerHTML == "") {
-      y_pos = h - h * 0.95;
-      x_pos = num.attrs.text == "drag" ? w / 2 + w * 0.05 : w / 2 + w * 0.1;
-      //integer or decimal: calibarate marker and number accordingly
-    } else {
-      y_pos = h / 2 - h / 4;
-      x_pos = num.attrs.text == "drag" ? w / 2 + w * 0.05 : w / 2 + w * 0.15;
-    }
     html2canvas($("#fract")[0], {
-      width: 35,
-      height: 35,
+      width: w,
+      height: h,
       backgroundColor: null,
     })
       .then((canvas) => {
         z_this.img = canvas.toDataURL("image/jpg");
+        let y_pos, x_pos;
+        /* w = canvas.width;
+        h = canvas.height; */
+        let div_fact = number.toString().length > 3 ? 4 : 2.4;
+        let nb = $("#fract")[0].children[2].innerHTML;
+        //IF FRACTION: CALIBRATE MARKER AND NUMBER ACCORDINGLY
+        if (nb == undefined || nb == "") {
+          if (num_gr.attrs.text == "drag") {
+            x_pos = this.tick_scale_W / div_fact; //w / 2 - w * 0.05; //draggables
+            y_pos = h - h * 0.8;
+          } else {
+            x_pos = this.tick_scale_W / div_fact; // w / 2 + w * 0.1; //anchors
+            y_pos = 4; //h - h * 0.8;
+          }
+          //INTEGER OR DECIMAL: CALIBARATE MARKER AND NUMBER ACCORDINGLY
+        } else {
+          if (num_gr.attrs.text == "drag") {
+            x_pos = 1; // = num_gr.width() / 2 - w / 3; //* 0.1; //draggables
+            y_pos = h / 2;
+          } else {
+            x_pos = 3; // w / 2 + w * 0.15; //anchors
+            y_pos = 4; //h / 2 - h / 4;
+          }
+        }
         Konva.Image.fromURL(z_this.img, function (imag) {
           imag.setAttrs({
             x: x_pos,
             y: y_pos,
             width: w,
             height: h,
+            stroke: 2,
           });
-          num.add(imag);
+          num_gr.add(imag);
           lay.batchDraw();
         });
 
@@ -631,7 +677,7 @@ export default class MatteWidget {
   //********************************************************** */
   async setCSSNumberDisplay(element) {
     this.fract_div = document.getElementById("fract");
-    this.fract_div.style = "display:block";
+    //this.fract_div.style = "display:block";
     if (element.includes("/")) {
       let css_num = "",
         css_denom = "";
@@ -647,6 +693,8 @@ export default class MatteWidget {
       this.fract_div.children[0].setAttribute("class", css_num);
       this.fract_div.children[1].innerHTML = element.split("/")[1];
       this.fract_div.children[1].setAttribute("class", css_denom);
+      /* this.fract_div.children[0].style["text-align"] = "center";
+      this.fract_div.children[1].style["text-align"] = "center"; */
     } else {
       this.fract_div.children[2].innerHTML = element;
     }
