@@ -58,7 +58,7 @@ export default class MatteWidget {
     this.dragnum_container_H = 50;
     this.dragmarker_W = 4;
     this.x_nextbtn = 605;
-    this.y_nextbtn = 625;
+    this.y_nextbtn = 575;
     this.fixed_anchor_width = 20; //place physical number center at ruler fraction point (according to scale)
     //let w_this = this;
     this.width = window.innerWidth - 100;
@@ -202,7 +202,6 @@ export default class MatteWidget {
           y: this.y_nextbtn,
           opacity: 0.75,
         });
-        layer.add(nextbutton);
 
         nextbutton.add(
           new Konva.Tag({
@@ -263,6 +262,9 @@ export default class MatteWidget {
         } else {
           nextbutton.children[1].setAttr("text", "Avslutt");
         }
+
+        layer.add(nextbutton);
+        nextbutton.zIndex(1);
 
         //populate object for saving attempt each time user clicks "Neste" or "Ferdig" button
         this.modifiedData_attempts = {
@@ -489,7 +491,7 @@ export default class MatteWidget {
             : anchor_nums[i];
           let brok = (anchor_nums[i] - scale_from) / (scale_to - scale_from);
           brok = brok * this.ruler_width;
-          brok = brok + this.ruler_x;
+          brok += this.ruler_x;
           brok -= this.fixed_anchor_width;
 
           //************************************* */
@@ -507,8 +509,8 @@ export default class MatteWidget {
             new Konva.Rect({
               width: this.tick_scale_W,
               height: this.tick_scale_H,
-              //stroke: "brown",
-              //strokeWidth: 4,
+              /* stroke: "brown",
+              strokeWidth: 4, */
             })
           );
 
@@ -643,10 +645,10 @@ export default class MatteWidget {
         if (nb == undefined || nb == "") {
           let div_fact = number.toString().length > 3 ? 3.9 : 2.4;
           if (num_gr.attrs.text == "drag") {
-            x_pos = this.tick_scale_W / div_fact; //w / 2 - w * 0.05; //draggables
+            x_pos = 1; // this.tick_scale_W / div_fact; //w / 2 - w * 0.05; //draggables
             y_pos = h - h * 0.8;
           } else {
-            x_pos = this.tick_scale_W / div_fact; // w / 2 + w * 0.1; //anchors
+            x_pos = 1; // this.tick_scale_W / div_fact; // w / 2 + w * 0.1; //anchors
             y_pos = 4; //h - h * 0.8;
           }
           //INTEGER OR DECIMAL: CALIBARATE MARKER AND NUMBER ACCORDINGLY
