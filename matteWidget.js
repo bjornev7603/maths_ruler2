@@ -126,12 +126,12 @@ export default class MatteWidget {
 
         //header title
         th.style =
-          "width: 400px;color:black;position: absolute;left: 750px; top: 40px;font-size:28px;font-weight:bold; font-family: Century Schoolbook;";
+          "width: 400px;color:black;position: relative;left: 300px; top: 20px;font-size:28px;font-weight:bold; font-family: Century Schoolbook;";
         let tname = th.appendChild(document.createTextNode(test.Testname));
 
         var name_in = document.getElementById("nameinput");
         name_in.style =
-          "width: 400px;color:black;position: absolute;left: 600px; top: 90px;font-family: Century Schoolbook;font-size:24px";
+          "width: 400px;color:black;position: relative;left: 175px; top: 30px;font-family: Century Schoolbook;font-size:24px";
 
         var d_tp = name_in.appendChild(document.createElement("DIV"));
         d_tp.setAttribute("id", "div_testperson");
@@ -143,16 +143,16 @@ export default class MatteWidget {
 
         var inn_div = d_tp.appendChild(document.createElement("DIV"));
         inn_div.setAttribute("id", "inner_div_testperson");
-        inn_div.style = "position: absolute;top: 9px;left: 2px;";
+        inn_div.style = "position: relative;top: 9px;left: -200px;";
 
         var name_lbl = inn_div.appendChild(document.createElement("LABEL"));
         name_lbl.style =
-          "position: absolute;top: 375px;left: 5px;font-size:18px";
+          "position: relative;top: 200px;left: 150px;font-size:18px";
         name_lbl.innerHTML += "Skriv inn navnet ditt: ";
         name_lbl.setAttribute("for", "testperson");
         var inp = inn_div.appendChild(document.createElement("INPUT"));
         inp.style =
-          "position: absolute;top: 400px;left: 2px;width:180px;height:20px;";
+          "position: relative;top: 225px;left: -35px;width:180px;height:20px;";
         this.setAttributes(inp, {
           type: "text",
           id: "testperson",
@@ -169,7 +169,7 @@ export default class MatteWidget {
         var x = d_tp.appendChild(document.createElement("INPUT"));
         x.setAttribute("type", "button");
         x.style =
-          "font-size: 22px;position: absolute;top:400px;left: 400px;color: antiquewhite;width:150px;background-color: deepskyblue;";
+          "font-size: 22px;position: relative;top:175px;left: 410px;color: antiquewhite;width:150px;background-color: deepskyblue;";
         x.setAttribute("value", "Ta oppgave");
         x.addEventListener("click", () => {
           if (
@@ -232,9 +232,7 @@ export default class MatteWidget {
             "tasknr",
             parseInt(localStorage.getItem("tasknr")) + 1
           );
-          if (parseInt(localStorage.getItem("tasknr")) >= test.tasks.length) {
-            alert("Takk for at du har løst oppgavene!");
-          }
+
           //alert("Neste oppgavenr er " + localStorage.getItem("tasknr"));
           if (document.getElementById("testperson").value != "") {
             localStorage.setItem(
@@ -249,8 +247,10 @@ export default class MatteWidget {
         //If beyond last task, start opening name input screen and reset task_nr
         if (parseInt(localStorage.getItem("tasknr")) >= test.tasks.length) {
           document.getElementById("widget-container").style.display = "none";
-          document.getElementById("nameinput").style.display = "block";
+          document.getElementById("nameinput").style.display = "none";
           localStorage.setItem("tasknr", 0);
+          document.getElementById("testheader").innerText =
+            "Takk for at du løste oppgaver!";
         }
 
         let taskid = parseInt(localStorage.getItem("tasknr"));
@@ -643,6 +643,7 @@ export default class MatteWidget {
         let nb = $("#fract")[0].children[2].innerHTML;
         //IF FRACTION: CALIBRATE MARKER AND NUMBER ACCORDINGLY
         if (nb == undefined || nb == "") {
+          //if (number.includes("/")) {
           let div_fact = number.toString().length > 3 ? 3.9 : 2.4;
           if (num_gr.attrs.text == "drag") {
             x_pos = 1; // this.tick_scale_W / div_fact; //w / 2 - w * 0.05; //draggables
@@ -655,7 +656,7 @@ export default class MatteWidget {
         } else {
           if (num_gr.attrs.text == "drag") {
             x_pos = 1; // = num_gr.width() / 2 - w / 3; //* 0.1; //draggables
-            y_pos = h / 2;
+            y_pos = h / 5;
           } else {
             x_pos = 3; // w / 2 + w * 0.15; //anchors
             y_pos = 4; //h / 2 - h / 4;
